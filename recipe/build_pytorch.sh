@@ -85,7 +85,7 @@ if [[ "$CONDA_BUILD_CROSS_COMPILATION" == 1 ]]; then
     export COMPILER_WORKS_EXITCODE__TRYRUN_OUTPUT=""
 fi
 
-export MAX_JOBS=${CPU_COUNT}
+export MAX_JOBS=2 #${CPU_COUNT}
 
 if [[ "$blas_impl" == "generic" ]]; then
     # Fake openblas
@@ -122,22 +122,22 @@ if [[ ${cuda_compiler_version} != "None" ]]; then
     # with no NVIDIA GPUs. However compilation fails with mkldnn and cuda enabled.
     export USE_MKLDNN=OFF
     export USE_CUDA=1
-    if [[ ${cuda_compiler_version} == 9.0* ]]; then
-        export TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;7.0+PTX"
-    elif [[ ${cuda_compiler_version} == 9.2* ]]; then
-        export TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0+PTX"
-    elif [[ ${cuda_compiler_version} == 10.* ]]; then
-        export TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5+PTX"
-    elif [[ ${cuda_compiler_version} == 11.0* ]]; then
-        export TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5;8.0+PTX"
-    elif [[ ${cuda_compiler_version} == 11.1 ]]; then
-        export TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
-    elif [[ ${cuda_compiler_version} == 11.2 ]]; then
-        export TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
-    else
-        echo "unsupported cuda version. edit build_pytorch.sh"
-        exit 1
-    fi
+    # if [[ ${cuda_compiler_version} == 9.0* ]]; then
+        export TORCH_CUDA_ARCH_LIST="6.0+PTX"
+    # elif [[ ${cuda_compiler_version} == 9.2* ]]; then
+    #     export TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0+PTX"
+    # elif [[ ${cuda_compiler_version} == 10.* ]]; then
+    #     export TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5+PTX"
+    # elif [[ ${cuda_compiler_version} == 11.0* ]]; then
+    #     export TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5;8.0+PTX"
+    # elif [[ ${cuda_compiler_version} == 11.1 ]]; then
+    #     export TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
+    # elif [[ ${cuda_compiler_version} == 11.2 ]]; then
+    #     export TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
+    # else
+    #     echo "unsupported cuda version. edit build_pytorch.sh"
+    #     exit 1
+    # fi
     export TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
     export NCCL_ROOT_DIR=$PREFIX
     export NCCL_INCLUDE_DIR=$PREFIX/include
