@@ -132,6 +132,7 @@ requirements:
     - protobuf
     - make      # [linux]
     - sccache   # [win]
+    - sd 1.*    # [win]
     - grep      # [unix]
     - rsync     # [unix]
   host:
@@ -281,6 +282,7 @@ outputs:
         - protobuf
         - make      # [linux]
         - sccache   # [win]
+        - sd 1.*    # [win]
       host:
         - {{ pin_subpackage('libtorch', exact=True) }}
         # GPU requirements
