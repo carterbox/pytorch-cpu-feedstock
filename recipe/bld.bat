@@ -44,28 +44,27 @@ if "%PKG_NAME%" == "pytorch" (
   @REM Get the full python version string
   for /f "tokens=2" %%a in ('python --version 2^>^&1') do set PY_VERSION_FULL=%%a
 
-  @REM sd rewrites files in place, so start from a copy of the pristine cache.
+  @REM sed -i edits in place, so start from a copy of the pristine cache.
   copy build\CMakeCache.txt.orig build\CMakeCache.txt
   if !ERRORLEVEL! neq 0 exit 1
 
   @REM Replace Python312 or python312 with ie Python311 or python311
-  sd "([Pp]ython)312" "${1}%CONDA_PY%" build/CMakeCache.txt
+  sed -i "s/\([Pp]ython\)312/\1%CONDA_PY%/g" build/CMakeCache.txt
   if !ERRORLEVEL! neq 0 exit 1
 
   @REM Replace version string v3.12.8() with ie v3.11.11()
-  sd "v3\.12\.[0-9]+" "v!PY_VERSION_FULL!" build/CMakeCache.txt
+  sed -i -E "s/v3\.12\.[0-9]+/v!PY_VERSION_FULL!/g" build/CMakeCache.txt
   if !ERRORLEVEL! neq 0 exit 1
 
   @REM Replace interpreter properties Python;3;12;8;64 with ie Python;3;11;11;64
-  sd "Python;3;12;[0-9]+;64" "Python;!PY_VERSION_FULL:.=;!;64" build/CMakeCache.txt
+  sed -i -E "s/Python;3;12;[0-9]+;64/Python;!PY_VERSION_FULL:.=;!;64/g" build/CMakeCache.txt
   if !ERRORLEVEL! neq 0 exit 1
 
   @REM Replace cp312-win_amd64 with ie cp311-win_amd64
-  sd "cp312" "cp%CONDA_PY%" build/CMakeCache.txt
+  sed -i "s/cp312/cp%CONDA_PY%/g" build/CMakeCache.txt
   if !ERRORLEVEL! neq 0 exit 1
 
-  @REM -F is literal mode, so the backslashes need no regex escaping.
-  sd -F "numpy\\core\\include" "numpy\\_core\\include" build/CMakeCache.txt
+  sed -i "s#numpy\\\\core\\\\include#numpy\\\\_core\\\\include#g" build/CMakeCache.txt
   if !ERRORLEVEL! neq 0 exit 1
 
 ) else (
@@ -254,10 +253,10 @@ if "%PKG_NAME%" == "libtorch" (
         copy %RECIPE_DIR%\activate.bat %RECIPE_DIR%\activate-replaced.bat
         if !ERRORLEVEL! neq 0 exit 1
 
-        sd -F "@cf_torch_cuda_arch_list@" "!TORCH_CUDA_ARCH_LIST!" %RECIPE_DIR%\activate-replaced.bat
+        sed -i "s/@cf_torch_cuda_arch_list@/!TORCH_CUDA_ARCH_LIST!/g" %RECIPE_DIR%\activate-replaced.bat
         if !ERRORLEVEL! neq 0 exit 1
 
-        @REM sd exits 0 when it matches nothing, so assert the value is present.
+        @REM sed exits 0 when it matches nothing, so assert the value is present.
         findstr /C:"CF_TORCH_CUDA_ARCH_LIST=!TORCH_CUDA_ARCH_LIST!" %RECIPE_DIR%\activate-replaced.bat >nul
         if !ERRORLEVEL! neq 0 (
             echo ERROR: failed to substitute cf_torch_cuda_arch_list
