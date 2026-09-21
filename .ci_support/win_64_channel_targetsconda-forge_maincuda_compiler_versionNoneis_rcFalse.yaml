@@ -53,8 +53,6 @@ python:
 - 3.14.* *_cp314
 pytorch:
 - '2.12'
-sccache:
-- 0.17.*
 target_platform:
 - win-64
 zip_keys:
