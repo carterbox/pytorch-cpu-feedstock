@@ -24,8 +24,6 @@ libabseil:
 - '20260526'
 libcudnn_dev:
 - '9'
-libmagma:
-- 2.10.0
 libmagma_devel:
 - 2.10.0
 libmagma_sparse:
@@ -49,7 +47,6 @@ pin_run_as_build:
 pybind11_abi:
 - '11'
 python:
-- 3.10.* *_cpython
 - 3.11.* *_cpython
 - 3.12.* *_cpython
 - 3.13.* *_cp313
