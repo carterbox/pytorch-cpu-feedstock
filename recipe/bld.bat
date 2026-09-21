@@ -177,18 +177,17 @@ set "CXXFLAGS=%CXXFLAGS% %CUDA_CFLAGS%"
 echo "CUDA_CFLAGS=%CUDA_CFLAGS%"
 echo "CXXFLAGS=%CXXFLAGS%"
 
-@REM Configure sccache
-set "CMAKE_C_COMPILER_LAUNCHER=sccache"
-set "CMAKE_CXX_COMPILER_LAUNCHER=sccache"
-set "CMAKE_CUDA_COMPILER_LAUNCHER=sccache"
+@REM Configure ccache. sccache cannot wrap nvcc: 0.17 fails the fatbin combine
+@REM step (mozilla/sccache#2828) and 0.18 fails on PTX-only gencodes
+@REM (mozilla/sccache#2862), both of which break the CUDA compiler check.
+set "CMAKE_C_COMPILER_LAUNCHER=ccache"
+set "CMAKE_CXX_COMPILER_LAUNCHER=ccache"
+set "CMAKE_CUDA_COMPILER_LAUNCHER=ccache"
 
-sccache --stop-server
-sccache --start-server
-if %ERRORLEVEL% neq 0 exit 1
-sccache --zero-stats
+ccache --zero-stats
 if %ERRORLEVEL% neq 0 exit 1
 
-@REM Clear the build from any remaining artifacts. We use sccache to avoid recompiling similar code.
+@REM Clear the build from any remaining artifacts. We use ccache to avoid recompiling similar code.
 if EXIST build (
     cmake --build build --target clean
     if %ERRORLEVEL% neq 0 exit 1
@@ -289,5 +288,5 @@ if "%PKG_NAME%" == "libtorch" (
     robocopy /NP /NFL /NDL /NJH /E /MOV %LIBRARY_LIB%\ %SP_DIR%\torch\lib\ torch_python.lib
 )
 
-@REM Show the sccache stats.
-sccache --show-stats
+@REM Show the ccache stats.
+ccache --show-stats
