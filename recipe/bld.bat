@@ -123,7 +123,8 @@ if not "%cuda_compiler_version%" == "None" (
     )
 
     set MAGMA_HOME=%LIBRARY_PREFIX%
-    set "PATH=%CUDA_BIN_PATH%;%PATH%"
+    @REM Only prepend when non-empty to avoid leading semicolon on PATH
+    if not "!CUDA_BIN_PATH!" == "" set "PATH=!CUDA_BIN_PATH!;!PATH!"
     set CUDNN_INCLUDE_DIR=%LIBRARY_PREFIX%\include
     set "CUDA_VERSION=%cuda_compiler_version%"
 ) else (
